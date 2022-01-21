@@ -6,18 +6,16 @@ import {Spin} from "antd";
 
 const BookStore = () => {
 
-    const [isSpinning, setSpinning] = useState(true);
+    const [isSpinning, setSpinning] = useState(false);
+    const [books, setBooks] = useState([])
 
-    if (isSpinning)
-        return <Spin/>
-    else return <>
+    return <Spin spinning={isSpinning}>
         <Filter />
-        <Book/>
-        <Book/>
-        <Book/>
-        <Book/>
+        {books.map((book) => {
+            return (<Book />)
+        })}
         <Cart/>
-    </>
+    </Spin>
 }
 
 export default BookStore;
