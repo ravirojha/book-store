@@ -2,7 +2,7 @@ import Book from "./Book";
 import Cart from "./Cart";
 import Filter from "./Filter";
 import {useState} from "react";
-import {Spin} from "antd";
+import {Button, Spin} from "antd";
 
 const BookStore = () => {
 
@@ -15,6 +15,7 @@ const BookStore = () => {
         {books.map((book) => {
             return (<Book />)
         })}
+        <Button type={'primary'}> Load More </Button>
         <Cart/>
     </Spin>
 }
