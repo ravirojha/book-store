@@ -6,6 +6,7 @@ import {FC} from "react";
 const { Meta } = Card;
 
 export interface IBook{
+    id: number;
     title: string;
     description: string;
     totalQuantity: number;
@@ -17,6 +18,7 @@ interface IProps {
 
 const Book: FC<IProps> = ({book={}}) => {
     const {
+        id=1212,
         title = "Book Name",
         description = "This is really nice book",
         totalQuantity = 10,
@@ -32,7 +34,8 @@ const Book: FC<IProps> = ({book={}}) => {
             ]}
         >
             <Row>
-                <Col span={12}>Name: {title}</Col>
+                <Col span={4}>ID: {id}</Col>
+                <Col span={8}>Name: {title}</Col>
                 <Col span={12}>Description: {description}</Col>
             </Row>
             <Row>
