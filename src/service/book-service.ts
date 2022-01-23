@@ -3,7 +3,7 @@ import * as faker from 'faker';
 import { Util } from "../util";
 // No Changes to be made in this function
 export default class BookService {
-    fetchBooks = async ({minPrice=0, maxPrice=1000, minQty=0, page=1}) => {
+    static fetchBooks = async ({minPrice=0, maxPrice=1000, minQty=0, page=1}) => {
         if (minPrice <= 0 || maxPrice >= 1000 || minPrice > maxPrice) throw new Error("No Books found");
         if (page >= 3) return [];
         const books = [];

@@ -11,10 +11,12 @@ const BookStore = () => {
 
 
     return <Spin spinning={isSpinning}>
-        <Filter />
-        {books.map((book) => {
-            return (<Book />)
-        })}
+        <Filter/>
+        {
+            books.map((book) => {
+                return (<Book/>)
+            })
+        }
         <Button type={'primary'}> Load More </Button>
         <Cart/>
     </Spin>
