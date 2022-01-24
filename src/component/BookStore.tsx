@@ -1,36 +1,76 @@
 import Book, { IBook } from "./Book";
 import Cart from "./Cart";
 import Filter from "./Filter";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Button, Spin} from "antd";
 import BookService from '../service/book-service';
 
 const BookStore = () => {
 
-    const [isSpinning, setSpinning] = useState(false);
-    const [books, setBooks] = useState<IBook[]>([])
+    const [isSpinning, setSpinning] = useState(true);
+    const [books, setBooks] = useState<IBook[]>([]);
+    const minPriceRef = useRef();
+    const maxPriceRef = useRef();
+    const minQtyRef = useRef();
+    const [minPrice, setMinPrice] = useState(12);
+    const [maxPrice, setMaxPrice] = useState(50);
+    const [minQty, setMinQty] = useState(10);
+    const [totalBooks, setTotalBooks] = useState(0);
+    const [totalAmount, setTotalAmount] = useState(0);
+    const [totalDiscount, setTotalDiscount] = useState(0);
+    const [page, setPage] = useState(1);
+    const [disabled, setDisabled] = useState(false);
+   
+
+    function handleFilter() {
+        setMinPrice(parseInt(minPriceRef.current.value));
+        setMaxPrice(parseInt(maxPriceRef.current.value));
+        setMinQty(parseInt(minQtyRef.current.value));
+    }
+
+
+    function cartHandler(pricePerQuantity: number, action: string) {
+        if(action==='increase') {
+            setTotalBooks(totalBooks+1);
+            setTotalAmount(totalAmount + pricePerQuantity);
+            if(totalBooks > 10 || totalAmount > 1000)
+            {
+                setTotalDiscount(0.1*totalAmount);
+            }
+        }
+        else if(action==='decrease') {
+            setTotalBooks(totalBooks-1);
+            setTotalAmount(totalAmount - pricePerQuantity);
+            if(totalBooks > 10 || totalAmount > 1000)
+            {
+                setTotalDiscount(0.1*totalAmount);
+            }
+        }
+    }
+
+    function incrementPageNumber() {
+        setPage(page+1);
+    }
+
 
     useEffect(() => {
-        if(books.length===0)
         setSpinning(true);
-        else
-        setSpinning(false);
-        BookService.fetchBooks({minPrice: 12, maxPrice: 50, minQty :1 , page: 1}).then(
-        bookData => setBooks(bookData)
-        );
-    },[books.length])
+        BookService.fetchBooks({minPrice, maxPrice, minQty, page}).then(
+        bookData => bookData.length === 0 ? setDisabled(true) : setBooks(bookData)
+        ).then(() => setSpinning(false));
+    },[books.length, maxPrice, minPrice, minQty, page])
 
     
 
     return <Spin spinning={isSpinning}>
-        <Filter/>
+        <Filter handleFilter={handleFilter} minPriceRef={minPriceRef} maxPriceRef={maxPriceRef} minQtyRef={minQtyRef}/>
         {   books.length >= 10 ? 
             books.map((book) => {
-                return (<Book key={book.id} book={book}/>)
+                return (<Book key={book.id} book={book} cartHandler={cartHandler}/>)
             }) : null
         }
-        <Button type={'primary'}> Load More </Button>
-        <Cart/>
+        <Button disabled={disabled} type={'primary'} onClick={incrementPageNumber}> Load More </Button>
+        <Cart totalBooks={totalBooks} totalAmount={totalAmount} totalDiscount={totalDiscount}/>
     </Spin>
 }
 

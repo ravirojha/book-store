@@ -1,17 +1,17 @@
 import {Card, Col, Row, Statistic} from "antd";
 
-const Cart = () => {
+const Cart = (props) => {
     return (
         <Card>
             <Row gutter={16}>
                 <Col span={8}>
-                    <Statistic title="Total Books to Order" value={`0 Pc`} />
+                    <Statistic title="Total Books to Order" value={`${props.totalBooks} Pc`} />
                 </Col>
                 <Col span={8}>
-                    <Statistic title="Total Discount" value={`0 INR`}  />
+                    <Statistic title="Total Discount" value={`${props.totalDiscount} INR`}  />
                 </Col>
                 <Col span={8}>
-                    <Statistic title="Total Amount" value={`0 INR`} />
+                    <Statistic title="Total Amount" value={`${props.totalAmount} INR`} />
                 </Col>
             </Row>
         </Card>

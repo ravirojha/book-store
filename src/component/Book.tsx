@@ -16,30 +16,37 @@ interface IProps {
     book?: IBook
 }
 
-const Book: FC<IProps> = ({book={}}) => {
+const Book: FC<IProps> = ({book={}, cartHandler}) => {
     const [orderQuantity, setOrderQuantity] = useState(0);
     const [totalPrice, setOrderPrice] = useState(0);
 
     function handleIncrease() {
+        if(orderQuantity < book.totalQuantity) {
         const pricePerQuantity : number = book.pricePerQty ? book.pricePerQty : 0;
         const newOrderQuantity = orderQuantity + 1;
         setOrderQuantity(newOrderQuantity);
         setOrderPrice(newOrderQuantity * pricePerQuantity);
+        cartHandler(pricePerQuantity, 'increase');
+        }
     }
 
     function handleDecrease() {
+        if(orderQuantity > 0) {
         const pricePerQuantity : number = book.pricePerQty ? book.pricePerQty : 0;
         const newOrderQuantity = orderQuantity - 1;
+        const newOrderPrice = newOrderQuantity * pricePerQuantity;
         setOrderQuantity(newOrderQuantity);
-        setOrderPrice(newOrderQuantity * pricePerQuantity);
+        setOrderPrice(newOrderPrice);
+        cartHandler(pricePerQuantity, 'decrease');
+        }
     }
 
     return <>
         <Card
             style={{ width: '80%', margin: '20px' }}
             actions={[
-                    <PlusOutlined onClick={handleIncrease}/>,
-                    <InputNumber disabled={orderQuantity === book.totalQuantity} value={orderQuantity} />,
+                    <PlusOutlined  onClick={handleIncrease}/>,
+                    <InputNumber  value={orderQuantity} />,
                     <MinusOutlined onClick={handleDecrease}/>
             ]}
         >
