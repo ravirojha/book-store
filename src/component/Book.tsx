@@ -13,10 +13,13 @@ export interface IBook{
     pricePerQty: number
 }
 interface IProps {
-    book?: IBook
+    book: IBook;
+    cartHandler: any;
 }
 
-const Book: FC<IProps> = ({book={}, cartHandler}) => {
+
+
+const Book: FC<IProps> = ({book, cartHandler}) => {
     const [orderQuantity, setOrderQuantity] = useState(0);
     const [totalPrice, setOrderPrice] = useState(0);
 

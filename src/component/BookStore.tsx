@@ -14,36 +14,58 @@ const BookStore = () => {
     const minQtyRef = useRef();
     const [minPrice, setMinPrice] = useState(12);
     const [maxPrice, setMaxPrice] = useState(50);
-    const [minQty, setMinQty] = useState(10);
+    const [minQty, setMinQty] = useState(2);
     const [totalBooks, setTotalBooks] = useState(0);
     const [totalAmount, setTotalAmount] = useState(0);
     const [totalDiscount, setTotalDiscount] = useState(0);
     const [page, setPage] = useState(1);
     const [disabled, setDisabled] = useState(false);
+    const [error, setError] = useState('');
    
 
     function handleFilter() {
-        setMinPrice(parseInt(minPriceRef.current.value));
-        setMaxPrice(parseInt(maxPriceRef.current.value));
-        setMinQty(parseInt(minQtyRef.current.value));
+        const tempMinPrice : any = minPriceRef.current;
+        if(tempMinPrice && tempMinPrice.value.length > 0) {
+        setMinPrice(parseInt(tempMinPrice.value));
+        }
+
+        const tempMaxPrice : any = maxPriceRef.current;
+        if(tempMaxPrice && tempMaxPrice.value.length > 0) {
+        setMaxPrice(parseInt(tempMaxPrice.value));
+        }
+
+        const tempMinQty : any = minQtyRef.current;
+        if(tempMinQty && tempMinQty.value.length > 0) {
+            setMinQty(parseInt(tempMinQty.value));
+        }
     }
 
 
     function cartHandler(pricePerQuantity: number, action: string) {
         if(action==='increase') {
             setTotalBooks(totalBooks+1);
-            setTotalAmount(totalAmount + pricePerQuantity);
-            if(totalBooks > 10 || totalAmount > 1000)
+            const tempAmount = totalAmount + pricePerQuantity;
+            if(totalBooks >= 10 || totalAmount > 1000)
             {
-                setTotalDiscount(0.1*totalAmount);
+                const discount = 0.1*totalAmount;
+                setTotalDiscount(discount);
+                setTotalAmount(tempAmount - discount);
+            }
+            else {
+                setTotalAmount(tempAmount);
             }
         }
         else if(action==='decrease') {
             setTotalBooks(totalBooks-1);
-            setTotalAmount(totalAmount - pricePerQuantity);
-            if(totalBooks > 10 || totalAmount > 1000)
+            const tempAmount = totalAmount - pricePerQuantity;
+            if(totalBooks >= 10 || totalAmount > 1000)
             {
-                setTotalDiscount(0.1*totalAmount);
+                const discount = 0.1*totalAmount;
+                setTotalDiscount(discount);
+                setTotalAmount(tempAmount - discount);
+            }
+            else {
+                setTotalAmount(tempAmount);
             }
         }
     }
@@ -54,10 +76,22 @@ const BookStore = () => {
 
 
     useEffect(() => {
+
         setSpinning(true);
         BookService.fetchBooks({minPrice, maxPrice, minQty, page}).then(
-        bookData => bookData.length === 0 ? setDisabled(true) : setBooks(bookData)
-        ).then(() => setSpinning(false));
+        (bookData) => {
+            if(bookData.length === 0) {
+                setDisabled(true)
+                setBooks([])
+                setError('No data Found')
+            } else setBooks(bookData)
+        }
+        ).then(() => setSpinning(false)).catch((error) => {
+            setError(error.message)
+            setSpinning(false)
+            setBooks([])
+            setDisabled(true)
+        });
     },[books.length, maxPrice, minPrice, minQty, page])
 
     
@@ -70,7 +104,9 @@ const BookStore = () => {
             }) : null
         }
         <Button disabled={disabled} type={'primary'} onClick={incrementPageNumber}> Load More </Button>
+        
         <Cart totalBooks={totalBooks} totalAmount={totalAmount} totalDiscount={totalDiscount}/>
+        {error}
     </Spin>
 }
 

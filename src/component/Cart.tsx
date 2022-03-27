@@ -1,6 +1,6 @@
 import {Card, Col, Row, Statistic} from "antd";
 
-const Cart = (props) => {
+const Cart = (props: { totalBooks: any; totalDiscount: any; totalAmount: any; }) => {
     return (
         <Card>
             <Row gutter={16}>

@@ -1,6 +1,6 @@
 import {Button, Card, Col, InputNumber, Row} from "antd";
 
-const Filter = (props) => {
+const Filter = (props : any) => {
   
     return <Card>
         <Row>
